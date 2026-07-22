@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Shree Balaji Restraunt & Cafe - Digital Menu</title>
+    <title>Shree Balaji Restaurant - Digital Menu</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css" />
 </head>
@@ -64,28 +64,6 @@
         </div>
     </div>
 
-<!-- Customer Details Modal (For First Time Users) -->
-    <div id="customerModal" class="modal">
-        <div class="modal-content" style="max-width: 400px; border-radius: 20px; padding: 25px; text-align: center;">
-            <h2 style="font-size: 1.5rem; margin-bottom: 10px;">Welcome to Shree Balaji! ✨</h2>
-            <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.95rem;">Please enter your details once for a seamless experience.</p>
-            
-            <input type="text" id="custName" placeholder="Your Good Name" style="width: 100%; padding: 14px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 12px; font-family: inherit; font-size: 1rem;">
-            
-            <input type="tel" id="custPhone" placeholder="Phone Number" style="width: 100%; padding: 14px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 12px; font-family: inherit; font-size: 1rem;">
-            
-            <div style="display: flex; gap: 10px;">
-                <button onclick="closeCustomerModal()" style="flex: 1; padding: 12px; border: none; background: #eee; border-radius: 12px; font-weight: 600; cursor: pointer;">Cancel</button>
-                <button onclick="saveAndProceedOrder()" style="flex: 2; padding: 12px; border: none; background: var(--primary); color: white; border-radius: 12px; font-weight: 700; cursor: pointer;">Confirm & Order</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Firebase SDKs (Compatibility versions for easy pure JS use) -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     
-    <!-- Tera Script File -->
-    <script src="script.js"></script>
 </body>
 </html>
