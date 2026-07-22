@@ -157,7 +157,8 @@ const MENU = [
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.innerHTML = `
-                    <div class="img-box"><img src="\( {item.img}" alt=" \){item.name}"></div>
+              <div class="img-box"><img src="${item.img}" alt="${item.name}"></div>
+
                     <div class="card-body">
                         <div class="title">${item.name}</div>
                         <div class="desc">${item.desc}</div>
