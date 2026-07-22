@@ -404,6 +404,9 @@ function pushOrderToFirebase(customerName, customerPhone) {
 }
 
 function showSuccessUI(name, total, orderId) {
+    // Save order data globally so bill can use it
+    storeOrderForBill(name, total, orderId, cart);
+
     const content = document.getElementById('cartModalContent');
     
     content.innerHTML = `
@@ -418,22 +421,17 @@ function showSuccessUI(name, total, orderId) {
             </div>
             
             <div style="display: flex; flex-direction: column; gap: 12px;">
-                <button onclick="generateDigitalBill()" style="padding: 16px; background: white; color: var(--text-main); border: 2px solid var(--border); border-radius: 14px; font-weight: 700; font-size: 1.1rem; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.02);">🧾 Get Digital Bill</button>
+                <button onclick="generateDigitalBill()" style="padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 700; font-size: 1.1rem; cursor: pointer; box-shadow: 0 8px 20px var(--primary-glow);">🧾 View & Download Digital Bill</button>
                 
                 <button onclick="window.location.reload()" style="padding: 16px; background: transparent; color: var(--text-muted); border: none; font-weight: 700; cursor: pointer; margin-top: 5px; font-size: 1rem;">Close Menu</button>
             </div>
         </div>
     `;
     
-    // Clear cart in background
     cart = [];
     document.getElementById('floatingCart').style.display = 'none';
 }
 
-function generateDigitalBill() {
-    // Uses CSS @media print to only show the success screen as a clean printable/PDF document
-    window.print(); 
-}
 
 // === 8. DEBOUNCED SEARCH ===
 let timer;
@@ -445,3 +443,148 @@ search.addEventListener('input', () => {
         filterAndRender(cat);
     }, 250);
 });
+
+// === 9. PROFESSIONAL DIGITAL BILL & PREVIEW ENGINE ===
+let lastOrderDetails = null; // Temporary store current bill data
+
+// Jab order firebase me success ho jaye, tab ye data save kar lenge
+function storeOrderForBill(name, total, orderId, itemsList) {
+    lastOrderDetails = {
+        name: name,
+        total: total,
+        orderId: orderId,
+        items: [...itemsList],
+        date: new Date().toLocaleString()
+    };
+}
+
+function generateDigitalBill() {
+    if (!lastOrderDetails) {
+        alert("No recent order found to generate bill!");
+        return;
+    }
+
+    const data = lastOrderDetails;
+    
+    // Items HTML generator with Image, Name, Price, Quantity
+    let itemsHTML = '';
+    data.items.forEach(item => {
+        const qty = item.quantity || 1;
+        const itemTotal = item.price * qty;
+        itemsHTML += `
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed #eee;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img src="${item.img}" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;" crossorigin="anonymous">
+                    <div>
+                        <div style="font-weight: 700; font-size: 0.95rem; color: #111827;">${escapeHtml(item.name)}</div>
+                        <div style="font-size: 0.8rem; color: #6B7280;">₹${item.price} × ${qty}</div>
+                    </div>
+                </div>
+                <div style="font-weight: 700; font-size: 0.95rem; color: #111827;">₹${itemTotal}</div>
+            </div>
+        `;
+    });
+
+    // Create a hidden or popup Bill Container matching App's Theme (QR Red-White Style)
+    let billModal = document.getElementById('billPreviewModal');
+    if (!billModal) {
+        billModal = document.createElement('div');
+        billModal.id = 'billPreviewModal';
+        billModal.className = 'modal';
+        billModal.style.cssText = "display:flex; align-items:center; justify-content:center; z-index:3000; background:rgba(0,0,0,0.7);";
+        document.body.appendChild(billModal);
+    }
+
+    billModal.innerHTML = `
+        <div style="background: #FFFFFF; width: 90%; max-width: 420px; border-radius: 24px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.25); animation: slideUp 0.3s ease-out;">
+            
+            <!-- Bill Printable Area (The Receipt with QR Theme Styling) -->
+            <div id="printableBillReceipt" style="padding: 25px; background: #FFFFFF; color: #111827; font-family: 'Outfit', sans-serif;">
+                
+                <!-- Brand Header -->
+                <div style="text-align: center; border-bottom: 2px solid #C61515; padding-bottom: 15px; margin-bottom: 15px;">
+                    <h2 style="font-size: 1.4rem; font-weight: 800; color: #111827; letter-spacing: -0.5px;">Shree Balaji <span style="color: #C61515;">Cafe</span></h2>
+                    <p style="font-size: 0.75rem; color: #6B7280; margin-top: 2px;">Rooftop Dining Experience • Tax Invoice</p>
+                </div>
+
+                <!-- Meta Info -->
+                <div style="font-size: 0.85srem; color: #4B5563; margin-bottom: 15px; display: flex; justify-content: space-between;">
+                    <div>
+                        <p><b>Customer:</b> ${escapeHtml(data.name)}</p>
+                        <p><b>Table No:</b> ${tableNo}</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <p><b>Order ID:</b> #${data.orderId.slice(-6).toUpperCase()}</p>
+                        <p style="font-size: 0.75rem; color: #9CA3AF;">${data.date}</p>
+                    </div>
+                </div>
+
+                <!-- Items Table Header -->
+                <div style="font-size: 0.8rem; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 4px;">
+                    Item Details & Qty
+                </div>
+
+                <!-- Dynamic Items List with Images -->
+                <div style="max-height: 220px; overflow-y: auto; padding-right: 4px;">
+                    ${itemsHTML}
+                </div>
+
+                <!-- Total Calculation -->
+                <div style="margin-top: 15px; border-top: 2px solid #111827; padding-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 1.1rem; font-weight: 800; color: #111827;">Grand Total</span>
+                    <span style="font-size: 1.3rem; font-weight: 800; color: #C61515;">₹${data.total}</span>
+                </div>
+
+                <!-- Footer branding -->
+                <div style="text-align: center; margin-top: 20px; font-size: 0.75rem; color: #9CA3AF; border-top: 1px dashed #eee; padding-top: 10px;">
+                    Thank you for dining with us! Come again soon. 🚀
+                </div>
+            </div>
+
+            <!-- Action Buttons (Download Options) -->
+            <div style="padding: 15px 25px; background: #F9FAFB; border-top: 1px solid #eee; display: flex; flex-direction: column; gap: 10px;">
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="downloadBillImage()" style="flex: 1; padding: 12px; background: #111827; color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 0.95rem;">📥 Download JPG</button>
+                    <button onclick="downloadBillPDF()" style="flex: 1; padding: 12px; background: #C61515; color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 0.95rem;">📄 Download PDF</button>
+                </div>
+                <button onclick="closeBillPreview()" style="padding: 10px; background: transparent; color: #6B7280; border: none; font-weight: 600; cursor: pointer; font-size: 0.9rem;">Close Preview</button>
+            </div>
+
+        </div>
+    `;
+}
+
+function closeBillPreview() {
+    const modal = document.getElementById('billPreviewModal');
+    if (modal) modal.style.display = 'none';
+}
+
+// Download Receipt as JPG Image
+function downloadBillImage() {
+    const receiptElement = document.getElementById('printableBillReceipt');
+    html2canvas(receiptElement, { scale: 2, useCORS: true }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `Balaji-Bill-${lastOrderDetails.orderId.slice(-6).toUpperCase()}.jpg`;
+        link.href = canvas.toDataURL('image/jpeg', 1.0);
+        link.click();
+    });
+}
+
+// Download Receipt as PDF
+function downloadBillPDF() {
+    const receiptElement = document.getElementById('printableBillReceipt');
+    html2canvas(receiptElement, { scale: 2, useCORS: true }).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        
+        const imgWidth = 100; // Centered width in mm
+        const pageHeight = 295;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let heightLeft = imgHeight;
+        let position = 15;
+
+        pdf.addImage(imgData, 'PNG', 55, position, imgWidth, imgHeight);
+        pdf.save(`Balaji-Bill-${lastOrderDetails.orderId.slice(-6).toUpperCase()}.pdf`);
+    });
+}
