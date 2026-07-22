@@ -179,55 +179,70 @@ const MENU = [
 ];
 
 
-// === 4. UI INITIALIZATION ===
+// === 4. SECURITY & LOAD LOGIC ===
+window.addEventListener('load', () => {
+    const loader = document.getElementById('loader');
+    const app = document.getElementById('app');
+
+    // Reject if table parameter is missing
+    if (!tableParam) {
+        if (loader) loader.classList.add('hidden');
+        document.body.innerHTML = `
+            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; background:#F5F7FA; text-align:center; padding:30px;">
+                <div style="font-size:5rem; margin-bottom:15px;">🛑</div>
+                <h2 style="color:#C61515; font-size:1.8rem; font-weight:800; font-family:'Outfit', sans-serif; margin-bottom:10px;">Scan QR to Order</h2>
+                <p style="color:#6B7280; font-size:1.05rem; font-family:'Outfit', sans-serif; line-height:1.5;">Please scan the QR code placed on your table to access the digital menu.</p>
+            </div>
+        `;
+        return;
+    }
+
+    // Set Table Number in Header badge
+    const badge = document.getElementById('tableBadge');
+    if (badge) badge.textContent = `Table ${tableNo}`;
+
+    setTimeout(() => {
+        if (loader) loader.classList.add('hidden');
+        if (app) app.classList.remove('hidden');
+        filterAndRender();
+    }, 800);
+});
+
+// === 5. RENDERING & FILTERING ===
 const categories = ['All', ...new Set(MENU.map(i => i.category))];
 const categoriesEl = document.getElementById('categories');
 const menuGrid = document.getElementById('menu-grid');
 const search = document.getElementById('search');
 
-// Load logic (Fast Load with Table setting)
-window.addEventListener('load', () => {
-    document.getElementById('tableBadge').textContent = `Table ${tableNo}`;
-    
-    setTimeout(() => {
-        document.getElementById('loader').classList.add('hidden');
-        document.getElementById('app').classList.remove('hidden');
-        filterAndRender();
-    }, 800);
-});
-
-// Category Population
-categories.forEach((cat, idx) => {
-    const btn = document.createElement('button');
-    btn.textContent = cat;
-    if (idx === 0) btn.classList.add('active');
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.categories button').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        filterAndRender(cat === 'All' ? null : cat);
+if (categoriesEl) {
+    categories.forEach((cat, idx) => {
+        const btn = document.createElement('button');
+        btn.textContent = cat;
+        if (idx === 0) btn.classList.add('active');
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.categories button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            filterAndRender(cat === 'All' ? null : cat);
+        });
+        categoriesEl.appendChild(btn);
     });
-    categoriesEl.appendChild(btn);
-});
+}
 
-// Escape HTML utility
 function escapeHtml(s) { 
     return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])) 
 }
 
-// Render Menu
 function render(items) {
+    if (!menuGrid) return;
     menuGrid.innerHTML = '';
     if (!items.length) {
-        menuGrid.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted); font-weight: 500;">No delicious matches found!</div>';
+        menuGrid.innerHTML = '<div style="text-align:center; padding:40px; color:#666;">No matches found</div>';
         return;
     }
-    
     items.forEach((item, index) => {
         const card = document.createElement('div');
         card.className = 'card';
         card.style.animation = `fadeCards 0.4s ease forwards ${index * 0.04}s`;
-        
-        // FIXED IMAGE SYNTAX BUG HERE: ${item.img}
         card.innerHTML = `
             <div class="img-box"><img src="${item.img}" alt="${escapeHtml(item.name)}" loading="lazy"></div>
             <div class="card-body">
@@ -244,6 +259,7 @@ function render(items) {
 }
 
 function filterAndRender(cat = null) {
+    if (!search) return;
     const q = search.value.toLowerCase();
     let filtered = MENU.filter(item => {
         const matchCat = !cat || item.category === cat;
@@ -253,7 +269,7 @@ function filterAndRender(cat = null) {
     render(filtered);
 }
 
-// === 5. CART LOGIC ===
+// === 6. CART MANAGEMENT ===
 function addToCart(id, event) {
     const item = MENU.find(i => i.id === id);
     const existing = cart.find(i => i.id === id);
@@ -262,8 +278,7 @@ function addToCart(id, event) {
     
     updateCartUI();
     
-    // Quick Button Feedback Animation
-    if (event) {
+    if (event && event.target) {
         const btn = event.target;
         const ogText = btn.textContent;
         btn.textContent = "ADDED ✓";
@@ -281,67 +296,73 @@ function updateCartUI() {
     const totalItems = cart.reduce((sum, i) => sum + (i.quantity || 1), 0);
     const totalPrice = cart.reduce((sum, i) => sum + i.price * (i.quantity || 1), 0);
     
-    document.getElementById('cartItemCount').textContent = `${totalItems} Items`;
-    document.getElementById('cartTotalAmt').textContent = `₹${totalPrice}`;
+    const countEl = document.getElementById('cartItemCount');
+    const totalEl = document.getElementById('cartTotalAmt');
+    if (countEl) countEl.textContent = `${totalItems} Items`;
+    if (totalEl) totalEl.textContent = `₹${totalPrice}`;
     
-    // Show/Hide Floating Cart
     const floatCart = document.getElementById('floatingCart');
-    if (totalItems > 0) {
-        floatCart.style.display = 'flex';
-    } else {
-        floatCart.style.display = 'none';
-        closeCart(); // close modal if empty
+    if (floatCart) {
+        floatCart.style.display = totalItems > 0 ? 'flex' : 'none';
     }
+    if (totalItems === 0) closeCart();
 }
 
 function showCart() {
     const container = document.getElementById('cartItems');
+    if (!container) return;
     container.innerHTML = '';
     let total = 0;
 
-    cart.forEach((item, index) => {
-        const qty = item.quantity || 1;
-        total += item.price * qty;
-        const div = document.createElement('div');
-        div.className = 'cart-item';
-        div.innerHTML = `
-            <div style="flex:1;">
-                <div style="font-weight:700; font-size:1.1rem; color:var(--text-main);">${escapeHtml(item.name)}</div>
-                <div style="color:var(--text-muted); font-size:0.95rem; margin-top:4px;">₹${item.price} × ${qty}</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:10px;">
-                <button class="quantity-btn" onclick="changeQty(${index}, -1)">–</button>
-                <span style="font-weight:800; min-width:24px; text-align:center; color:var(--text-main);">${qty}</span>
-                <button class="quantity-btn" onclick="changeQty(${index}, 1)">+</button>
-                <button onclick="removeFromCart(${index})" style="margin-left:12px; color:#C61515; background:none; border:none; font-size:1.3rem; cursor:pointer;">🗑</button>
-            </div>
-        `;
-        container.appendChild(div);
-    });
+    if (cart.length === 0) {
+        container.innerHTML = '<p style="text-align:center; padding:40px; color:#666;">Your cart is empty</p>';
+    } else {
+        cart.forEach((item, index) => {
+            const qty = item.quantity || 1;
+            total += item.price * qty;
+            const div = document.createElement('div');
+            div.className = 'cart-item';
+            div.innerHTML = `
+                <div style="flex:1;">
+                    <div style="font-weight:600;">${escapeHtml(item.name)}</div>
+                    <div style="color:#666; font-size:0.9rem;">₹${item.price} × ${qty}</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <button class="quantity-btn" onclick="changeQty(${index}, -1)">–</button>
+                    <span style="font-weight:600; min-width:20px; text-align:center;">${qty}</span>
+                    <button class="quantity-btn" onclick="changeQty(${index}, 1)">+</button>
+                    <button onclick="removeFromCart(${index})" style="margin-left:15px; color:#e11d48; background:none; border:none; font-size:1.2rem; cursor:pointer;">🗑</button>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
 
-    document.getElementById('modalTotal').textContent = `₹${total}`;
-    document.getElementById('cartModal').style.display = 'flex';
+    const modalTotal = document.getElementById('modalTotal');
+    if (modalTotal) modalTotal.textContent = `₹${total}`;
+    const cartModal = document.getElementById('cartModal');
+    if (cartModal) cartModal.style.display = 'flex';
 }
 
 function changeQty(index, change) {
     cart[index].quantity = (cart[index].quantity || 1) + change;
     if (cart[index].quantity < 1) cart.splice(index, 1);
-    
+    showCart();
     updateCartUI();
-    if(cart.length > 0) showCart(); 
 }
 
 function removeFromCart(index) {
     cart.splice(index, 1);
+    showCart();
     updateCartUI();
-    if(cart.length > 0) showCart();
 }
 
 function closeCart() {
-    document.getElementById('cartModal').style.display = 'none';
+    const cartModal = document.getElementById('cartModal');
+    if (cartModal) cartModal.style.display = 'none';
 }
 
-// === 6. CHECKOUT & SMART MEMORY ===
+// === 7. CHECKOUT & SMART MEMORY ===
 function placeOrder() {
     if (cart.length === 0) return;
 
@@ -349,28 +370,31 @@ function placeOrder() {
     const savedPhone = localStorage.getItem('balaji_phone');
 
     if (savedName && savedPhone) {
-        // Known VIP Customer - Bypass Form
         pushOrderToFirebase(savedName, savedPhone);
     } else {
-        // Ask for details first time
-        document.getElementById('customerModal').style.display = 'flex';
+        const custModal = document.getElementById('customerModal');
+        if (custModal) custModal.style.display = 'flex';
     }
 }
 
 function closeCustomerModal() {
-    document.getElementById('customerModal').style.display = 'none';
+    const custModal = document.getElementById('customerModal');
+    if (custModal) custModal.style.display = 'none';
 }
 
 function saveAndProceedOrder() {
-    const name = document.getElementById('custName').value.trim();
-    const phone = document.getElementById('custPhone').value.trim();
+    const nameInput = document.getElementById('custName');
+    const phoneInput = document.getElementById('custPhone');
+    
+    if (!nameInput || !phoneInput) return;
+    const name = nameInput.value.trim();
+    const phone = phoneInput.value.trim();
 
     if (!name || !phone) {
-        alert("Please enter Name and Phone to place the order.");
+        alert("Please enter Name and Phone.");
         return;
     }
 
-    // Save to LocalStorage for future visits
     localStorage.setItem('balaji_name', name);
     localStorage.setItem('balaji_phone', phone);
     
@@ -378,7 +402,7 @@ function saveAndProceedOrder() {
     pushOrderToFirebase(name, phone);
 }
 
-// === 7. FIREBASE PUSH & SUCCESS UI ===
+// === 8. FIREBASE PUSH & SUCCESS UI ===
 function pushOrderToFirebase(customerName, customerPhone) {
     const totalAmount = cart.reduce((sum, i) => sum + i.price * (i.quantity || 1), 0);
     
@@ -392,62 +416,16 @@ function pushOrderToFirebase(customerName, customerPhone) {
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
     };
 
-    // Firebase Write Operation
     db.collection("orders").add(orderData)
     .then((docRef) => {
         showSuccessUI(customerName, totalAmount, docRef.id);
     })
     .catch((error) => {
         console.error("Firebase Error: ", error);
-        alert("Network Error! Order could not be sent.");
+        alert("Network Error! Order could not be placed.");
     });
 }
 
-function showSuccessUI(name, total, orderId) {
-    // Save order data globally so bill can use it
-    storeOrderForBill(name, total, orderId, cart);
-
-    const content = document.getElementById('cartModalContent');
-    
-    content.innerHTML = `
-        <div style="padding: 40px 25px; text-align: center; background: white; border-radius: 20px;">
-            <div style="font-size: 4.5rem; margin-bottom: 15px;">✅</div>
-            <h2 style="color: var(--text-main); font-size: 2rem; font-weight: 800; margin-bottom: 8px;">Order Placed!</h2>
-            <p style="color: var(--text-muted); font-size: 1.05rem; margin-bottom: 25px; line-height: 1.4;">Thank you, ${escapeHtml(name)}! Your delicious food is being prepared for <b style="color:var(--text-main)">Table ${tableNo}</b>.</p>
-            
-            <div style="background: var(--bg); padding: 20px; border-radius: 16px; margin-bottom: 25px; border: 1px dashed #ccc;">
-                <p style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600;">ORDER ID: #${orderId.slice(-6).toUpperCase()}</p>
-                <h3 style="font-size: 1.8rem; color: var(--primary); font-weight: 800; margin-top: 5px;">Total: ₹${total}</h3>
-            </div>
-            
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-                <button onclick="generateDigitalBill()" style="padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 700; font-size: 1.1rem; cursor: pointer; box-shadow: 0 8px 20px var(--primary-glow);">🧾 View & Download Digital Bill</button>
-                
-                <button onclick="window.location.reload()" style="padding: 16px; background: transparent; color: var(--text-muted); border: none; font-weight: 700; cursor: pointer; margin-top: 5px; font-size: 1rem;">Close Menu</button>
-            </div>
-        </div>
-    `;
-    
-    cart = [];
-    document.getElementById('floatingCart').style.display = 'none';
-}
-
-
-// === 8. DEBOUNCED SEARCH ===
-let timer;
-search.addEventListener('input', () => {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-        const active = document.querySelector('.categories button.active');
-        const cat = active && active.textContent !== 'All' ? active.textContent : null;
-        filterAndRender(cat);
-    }, 250);
-});
-
-// === 9. PROFESSIONAL DIGITAL BILL & PREVIEW ENGINE ===
-let lastOrderDetails = null; // Temporary store current bill data
-
-// Jab order firebase me success ho jaye, tab ye data save kar lenge
 function storeOrderForBill(name, total, orderId, itemsList) {
     lastOrderDetails = {
         name: name,
@@ -458,15 +436,41 @@ function storeOrderForBill(name, total, orderId, itemsList) {
     };
 }
 
+function showSuccessUI(name, total, orderId) {
+    storeOrderForBill(name, total, orderId, cart);
+    const content = document.getElementById('cartModalContent');
+    if (!content) return;
+    
+    content.innerHTML = `
+        <div style="padding: 40px 25px; text-align: center; background: white; border-radius: 20px;">
+            <div style="font-size: 4.5rem; margin-bottom: 15px;">✅</div>
+            <h2 style="color: var(--text-main); font-size: 2rem; font-weight: 800; margin-bottom: 8px;">Order Placed!</h2>
+            <p style="color: var(--text-muted); font-size: 1.05rem; margin-bottom: 25px;">Thank you, ${escapeHtml(name)}! Your food is being prepared for <b>Table ${tableNo}</b>.</p>
+            
+            <div style="background: var(--bg); padding: 20px; border-radius: 16px; margin-bottom: 25px; border: 1px dashed #ccc;">
+                <p style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600;">ORDER ID: #${orderId.slice(-6).toUpperCase()}</p>
+                <h3 style="font-size: 1.8rem; color: var(--primary); font-weight: 800; margin-top: 5px;">Total: ₹${total}</h3>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button onclick="generateDigitalBill()" style="padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 700; font-size: 1.1rem; cursor: pointer;">🧾 View & Download Digital Bill</button>
+                <button onclick="window.location.reload()" style="padding: 16px; background: transparent; color: var(--text-muted); border: none; font-weight: 700; cursor: pointer;">Close Menu</button>
+            </div>
+        </div>
+    `;
+    cart = [];
+    const floatCart = document.getElementById('floatingCart');
+    if (floatCart) floatCart.style.display = 'none';
+}
+
+// === 9. DIGITAL BILL ENGINE ===
 function generateDigitalBill() {
     if (!lastOrderDetails) {
-        alert("No recent order found to generate bill!");
+        alert("No recent order found!");
         return;
     }
 
     const data = lastOrderDetails;
-    
-    // Items HTML generator with Image, Name, Price, Quantity
     let itemsHTML = '';
     data.items.forEach(item => {
         const qty = item.quantity || 1;
@@ -485,7 +489,6 @@ function generateDigitalBill() {
         `;
     });
 
-    // Create a hidden or popup Bill Container matching App's Theme (QR Red-White Style)
     let billModal = document.getElementById('billPreviewModal');
     if (!billModal) {
         billModal = document.createElement('div');
@@ -496,19 +499,13 @@ function generateDigitalBill() {
     }
 
     billModal.innerHTML = `
-        <div style="background: #FFFFFF; width: 90%; max-width: 420px; border-radius: 24px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.25); animation: slideUp 0.3s ease-out;">
-            
-            <!-- Bill Printable Area (The Receipt with QR Theme Styling) -->
+        <div style="background: #FFFFFF; width: 90%; max-width: 420px; border-radius: 24px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.25);">
             <div id="printableBillReceipt" style="padding: 25px; background: #FFFFFF; color: #111827; font-family: 'Outfit', sans-serif;">
-                
-                <!-- Brand Header -->
                 <div style="text-align: center; border-bottom: 2px solid #C61515; padding-bottom: 15px; margin-bottom: 15px;">
-                    <h2 style="font-size: 1.4rem; font-weight: 800; color: #111827; letter-spacing: -0.5px;">Shree Balaji <span style="color: #C61515;">Cafe</span></h2>
-                    <p style="font-size: 0.75rem; color: #6B7280; margin-top: 2px;">Rooftop Dining Experience • Tax Invoice</p>
+                    <h2 style="font-size: 1.4rem; font-weight: 800; color: #111827;">Shree Balaji <span style="color: #C61515;">Cafe</span></h2>
+                    <p style="font-size: 0.75rem; color: #6B7280;">Rooftop Dining Experience • Tax Invoice</p>
                 </div>
-
-                <!-- Meta Info -->
-                <div style="font-size: 0.85srem; color: #4B5563; margin-bottom: 15px; display: flex; justify-content: space-between;">
+                <div style="font-size: 0.85rem; color: #4B5563; margin-bottom: 15px; display: flex; justify-content: space-between;">
                     <div>
                         <p><b>Customer:</b> ${escapeHtml(data.name)}</p>
                         <p><b>Table No:</b> ${tableNo}</p>
@@ -518,38 +515,20 @@ function generateDigitalBill() {
                         <p style="font-size: 0.75rem; color: #9CA3AF;">${data.date}</p>
                     </div>
                 </div>
-
-                <!-- Items Table Header -->
-                <div style="font-size: 0.8rem; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 4px;">
-                    Item Details & Qty
-                </div>
-
-                <!-- Dynamic Items List with Images -->
-                <div style="max-height: 220px; overflow-y: auto; padding-right: 4px;">
-                    ${itemsHTML}
-                </div>
-
-                <!-- Total Calculation -->
+                <div style="font-size: 0.8rem; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 4px;">Item Details & Qty</div>
+                <div style="max-height: 220px; overflow-y: auto; padding-right: 4px;">${itemsHTML}</div>
                 <div style="margin-top: 15px; border-top: 2px solid #111827; padding-top: 12px; display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-size: 1.1rem; font-weight: 800; color: #111827;">Grand Total</span>
+                    <span style="font-size: 1.1rem; font-weight: 800;">Grand Total</span>
                     <span style="font-size: 1.3rem; font-weight: 800; color: #C61515;">₹${data.total}</span>
                 </div>
-
-                <!-- Footer branding -->
-                <div style="text-align: center; margin-top: 20px; font-size: 0.75rem; color: #9CA3AF; border-top: 1px dashed #eee; padding-top: 10px;">
-                    Thank you for dining with us! Come again soon. 🚀
-                </div>
             </div>
-
-            <!-- Action Buttons (Download Options) -->
             <div style="padding: 15px 25px; background: #F9FAFB; border-top: 1px solid #eee; display: flex; flex-direction: column; gap: 10px;">
                 <div style="display: flex; gap: 10px;">
-                    <button onclick="downloadBillImage()" style="flex: 1; padding: 12px; background: #111827; color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 0.95rem;">📥 Download JPG</button>
-                    <button onclick="downloadBillPDF()" style="flex: 1; padding: 12px; background: #C61515; color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 0.95rem;">📄 Download PDF</button>
+                    <button onclick="downloadBillImage()" style="flex: 1; padding: 12px; background: #111827; color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer;">📥 Download JPG</button>
+                    <button onclick="downloadBillPDF()" style="flex: 1; padding: 12px; background: #C61515; color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer;">📄 Download PDF</button>
                 </div>
-                <button onclick="closeBillPreview()" style="padding: 10px; background: transparent; color: #6B7280; border: none; font-weight: 600; cursor: pointer; font-size: 0.9rem;">Close Preview</button>
+                <button onclick="closeBillPreview()" style="padding: 10px; background: transparent; color: #6B7280; border: none; font-weight: 600; cursor: pointer;">Close Preview</button>
             </div>
-
         </div>
     `;
 }
@@ -559,7 +538,6 @@ function closeBillPreview() {
     if (modal) modal.style.display = 'none';
 }
 
-// Download Receipt as JPG Image
 function downloadBillImage() {
     const receiptElement = document.getElementById('printableBillReceipt');
     html2canvas(receiptElement, { scale: 2, useCORS: true }).then(canvas => {
@@ -570,21 +548,26 @@ function downloadBillImage() {
     });
 }
 
-// Download Receipt as PDF
 function downloadBillPDF() {
     const receiptElement = document.getElementById('printableBillReceipt');
     html2canvas(receiptElement, { scale: 2, useCORS: true }).then(canvas => {
         const imgData = canvas.toDataURL('image/png');
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'mm', 'a4');
-        
-        const imgWidth = 100; // Centered width in mm
-        const pageHeight = 295;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        let heightLeft = imgHeight;
-        let position = 15;
-
-        pdf.addImage(imgData, 'PNG', 55, position, imgWidth, imgHeight);
+        pdf.addImage(imgData, 'PNG', 55, 15, 100, (canvas.height * 100) / canvas.width);
         pdf.save(`Balaji-Bill-${lastOrderDetails.orderId.slice(-6).toUpperCase()}.pdf`);
+    });
+}
+
+// === 10. SEARCH DEBOUNCE ===
+let timer;
+if (search) {
+    search.addEventListener('input', () => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            const active = document.querySelector('.categories button.active');
+            const cat = active && active.textContent !== 'All' ? active.textContent : null;
+            filterAndRender(cat);
+        }, 250);
     });
 }
