@@ -16,10 +16,39 @@ if (!firebase.apps.length) {
 }
 const db = firebase.firestore();
 
-// === 2. AUTO TABLE NUMBER LOGIC ===
+// === 2. AUTO TABLE NUMBER LOGIC & SECURITY CHECK ===
 const urlParams = new URLSearchParams(window.location.search);
-const tableNo = urlParams.get('table') || 'Counter';
-let cart = [];
+const tableParam = urlParams.get('table');
+
+window.addEventListener('load', () => {
+    const loader = document.getElementById('loader');
+    const app = document.getElementById('app');
+
+    // Security Check: Agar table number URL me nahi hai, toh Reject kar do
+    if (!tableParam) {
+        loader.classList.add('hidden');
+        
+        // Lock Screen UI
+        document.body.innerHTML = `
+            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; background:#F5F7FA; text-align:center; padding:30px;">
+                <div style="font-size:5rem; margin-bottom:15px; animation: slideUp 0.5s ease;">🛑</div>
+                <h2 style="color:#C61515; font-size:1.8rem; font-weight:800; font-family:'Outfit', sans-serif; margin-bottom:10px;">Scan QR to Order</h2>
+                <p style="color:#6B7280; font-size:1.05rem; font-family:'Outfit', sans-serif; line-height:1.5;">Please scan the QR code placed on your table to access the digital menu and place your order.</p>
+            </div>
+        `;
+        return; // Code yahi ruk jayega, app load hi nahi hogi!
+    }
+
+    // Agar QR scan kiya hai, toh aage badho
+    const tableNo = tableParam;
+    document.getElementById('tableBadge').textContent = `Table ${tableNo}`;
+    
+    setTimeout(() => {
+        loader.classList.add('hidden');
+        app.classList.remove('hidden');
+        filterAndRender();
+    }, 800);
+});
 
 // === 3. FULL MENU DATA ===
 const MENU = [
