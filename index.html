@@ -13,6 +13,7 @@
         <div class="pulsing-circle"></div>
     </div>
 
+    <!-- Main App Container -->
     <div id="app" class="app hidden">
         <header class="app-header">
             <div class="header-content">
@@ -20,6 +21,7 @@
                     <h1 class="brand-name">Shree Balaji <span>Cafe</span></h1>
                     <p class="brand-sub">Rooftop Dining Experience</p>
                 </div>
+                <!-- ID Fix: tableBadge added here -->
                 <div class="table-badge" id="tableBadge">Table 4</div>
             </div>
             <div class="search-container">
@@ -35,10 +37,11 @@
             <div id="menu-grid" class="menu-list"></div>
         </main>
 
-        <div class="floating-cart">
+        <!-- ID Fixes: floatingCart, cartItemCount, and cartTotalAmt added here -->
+        <div class="floating-cart" id="floatingCart">
             <div class="cart-info">
-                <span class="cart-items">0 Items</span>
-                <span class="cart-total">₹0</span>
+                <span class="cart-items" id="cartItemCount">0 Items</span>
+                <span class="cart-total" id="cartTotalAmt">₹0</span>
             </div>
             <button class="view-cart-btn" onclick="showCart()">View Order →</button>
         </div>
@@ -46,26 +49,27 @@
 
     <!-- Cart Modal -->
     <div id="cartModal" class="modal">
-        <div class="modal-content">
+        <!-- ID Fix: cartModalContent added here -->
+        <div class="modal-content" id="cartModalContent">
             <div class="modal-header">
                 <h2>Your Order</h2>
-                <button onclick="closeCart()" style="font-size:1.5rem; background:none; border:none; cursor:pointer;">×</button>
+                <button onclick="closeCart()" style="font-size:1.8rem; background:none; border:none; cursor:pointer; color: #666;">&times;</button>
             </div>
             <div id="cartItems"></div>
-            <div style="padding:20px; border-top:2px solid #eee;">
-                <div style="display:flex; justify-content:space-between; font-size:1.2rem; font-weight:700; margin-bottom:15px;">
+            <!-- ID Fix: cartFooter added here -->
+            <div id="cartFooter" style="padding:20px; border-top:2px solid #eee; background: white;">
+                <div style="display:flex; justify-content:space-between; font-size:1.2rem; font-weight:800; margin-bottom:15px; color: var(--text-main);">
                     <span>Total</span>
                     <span id="modalTotal">₹0</span>
                 </div>
-                <button onclick="placeOrder()" style="width:100%; padding:16px; background:var(--primary); color:white; border:none; border-radius:12px; font-size:1.1rem; font-weight:700;">
-                    Place Order
+                <button onclick="placeOrder()" style="width:100%; padding:16px; background:var(--primary); color:white; border:none; border-radius:12px; font-size:1.1rem; font-weight:700; cursor: pointer; box-shadow: 0 8px 20px var(--primary-glow);">
+                    Place Order to Kitchen
                 </button>
             </div>
         </div>
     </div>
 
-    
-<!-- Customer Details Modal (Smart Memory) -->
+    <!-- Customer Details Modal (Smart Memory) -->
     <div id="customerModal" class="modal" style="align-items: center; justify-content: center;">
         <div class="modal-content" style="max-width: 90%; width: 400px; border-radius: 20px; padding: 25px; text-align: center; max-height: max-content;">
             <h2 style="font-size: 1.6rem; margin-bottom: 10px; color: var(--text-main);">Welcome! ✨</h2>
@@ -82,7 +86,7 @@
         </div>
     </div>
 
-    <!-- Firebase SDKs (Compatibility versions for seamless vanilla JS integration) -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     
