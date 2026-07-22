@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Shree Balaji Restraunt & Cafe - Digital Menu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <!-- Loader -->
+    <div id="loader" class="loader">
+        <div class="pulsing-circle"></div>
+    </div>
+
+    <div id="app" class="app hidden">
+        <header class="app-header">
+            <div class="header-content">
+                <div class="brand-info">
+                    <h1 class="brand-name">Shree Balaji <span>Cafe</span></h1>
+                    <p class="brand-sub">Rooftop Dining Experience</p>
+                </div>
+                <div class="table-badge">Table 4</div>
+            </div>
+            <div class="search-container">
+                <input autocomplete="off" id="search" type="search" placeholder="Search for your favorite dish..." />
+            </div>
+        </header>
+
+        <div class="nav-section">
+            <nav class="categories" id="categories"></nav>
+        </div>
+
+        <main class="menu-section">
+            <div id="menu-grid" class="menu-list"></div>
+        </main>
+
+        <div class="floating-cart">
+            <div class="cart-info">
+                <span class="cart-items">0 Items</span>
+                <span class="cart-total">₹0</span>
+            </div>
+            <button class="view-cart-btn" onclick="showCart()">View Order →</button>
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cartModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Your Order</h2>
+                <button onclick="closeCart()" style="font-size:1.5rem; background:none; border:none; cursor:pointer;">×</button>
+            </div>
+            <div id="cartItems"></div>
+            <div style="padding:20px; border-top:2px solid #eee;">
+                <div style="display:flex; justify-content:space-between; font-size:1.2rem; font-weight:700; margin-bottom:15px;">
+                    <span>Total</span>
+                    <span id="modalTotal">₹0</span>
+                </div>
+                <button onclick="placeOrder()" style="width:100%; padding:16px; background:var(--primary); color:white; border:none; border-radius:12px; font-size:1.1rem; font-weight:700;">
+                    Place Order
+                </button>
+            </div>
+        </div>
+    </div>
+
+    
+</body>
+</html>

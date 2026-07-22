@@ -1,0 +1,273 @@
+
+        // === SAMPLE MENU DATA ===
+        const MENU = [
+          { id:1, category:'Breakfast', name:'Butter Toast', price:50, desc:'Crisp golden toast generously spread with butter.', img:'https://picsum.photos/id/292/300/300' },
+          { id:2, category:'Breakfast', name:'Chhole Bhatura', price:70, desc:'Fluffy bhaturas served with spicy tangy chhole.', img:'https://picsum.photos/id/431/300/300' },
+          { id:3, category:'South Indian', name:'Masala Dosa', price:100, desc:'Crispy rice crepe filled with spiced potato masala.', img:'https://picsum.photos/id/870/300/300' },
+          { id:4, category:'South Indian', name:'Idli Sambhar (3 pcs)', price:60, desc:'Soft steamed idlis served with sambar and chutney.', img:'https://picsum.photos/id/1060/300/300' },
+          { id:5, category:'Fast Food', name:'Veg Burger', price:50, desc:'Crunchy veg patty with lettuce, tomato & mayo.', img:'https://picsum.photos/id/1080/300/300' },
+          { id:6, category:'Starter', name:'French Fries', price:80, desc:'Golden, crispy potato fries served with dip.', img:'https://picsum.photos/id/292/300/300' },
+          { id:7, category:'Pizza', name:'Onion Cheese Pizza', price:180, desc:'Cheesy pizza topped with onion slices.', img:'https://picsum.photos/id/431/300/300' },
+          { id:8, category:'Pizza', name:'Double Cheese Pizza', price:220, desc:'Classic pizza overloaded with extra cheese.', img:'https://picsum.photos/id/870/300/300' },
+          { id:9, category:'Rice', name:'Veg Briyani', price:140, desc:'Aromatic basmati cooked with veggies', img:'https://picsum.photos/id/1060/300/300' },
+          { id:11, category:'Thali', name:'Dal, 4 Type Sabji, Dahi,Salad,Papad, Bread,Pickle,1Pcs. Sweet', price:400, desc:'Premium thali with multiple curries and dessert.', img:'https://picsum.photos/id/1080/300/300' },
+          { id:12, category:'Main Course', name:'Paneer Lababdar', price:240, desc:'Creamy paneer curry thali with roti, rice & sides.', img:'https://picsum.photos/id/292/300/300' },
+          { id:14, category:'Shake', name:'Cold Coffee', price:60, desc:'Tasty Cold Coffee', img:'https://picsum.photos/id/431/300/300' },
+          { id:15, category:'Breakfast', name:'Chola Puri', price:50, desc:'Deep-fried puris paired with flavorful chole curry.', img:'https://picsum.photos/id/870/300/300' },
+          { id:16, category:'Breakfast', name:'Poha Veg', price:50, desc:'Light and healthy flattened rice cooked with veggies and spices', img:'https://picsum.photos/id/1060/300/300' },
+          { id:17, category:'South Indian', name:'Plain Dosa', price:80, desc:'Classic thin dosa served with coconut chutney and sambar.', img:'https://picsum.photos/id/1080/300/300' },
+          { id:18, category:'South Indian', name:'Paneer Dosa', price:120, desc:'Crispy dosa stuffed with flavorful paneer filling.', img:'https://picsum.photos/id/292/300/300' },
+          { id:19, category:'South Indian', name:'Cheese Dosa', price:150, desc:'Dosa loaded with melted cheese for a rich taste.', img:'https://picsum.photos/id/431/300/300' },
+          { id:20, category:'South Indian', name:'Butter Dosa', price:120, desc:'Soft dosa coated with melting butter for extra flavor.', img:'https://picsum.photos/id/870/300/300' },
+          { id:21, category:'Starter', name:'Paneer Chilli', price:160, desc:'Fried paneer cubes tossed in spicy Indo-Chinese sauce.', img:'https://picsum.photos/id/1060/300/300' },
+          { id:22, category:'Starter', name:'Paneer Pakoda', price:140, desc:'Gram flour coated paneer fritters deep-fried to perfection.', img:'https://picsum.photos/id/1080/300/300' },
+          { id:23, category:'Starter', name:'Paneer Tikka', price:250, desc:'Marinated paneer cubes grilled with capsicum and onion', img:'https://picsum.photos/id/292/300/300' },
+          { id:24, category:'Starter', name:'Veg Pakoda', price:100, desc:'Mixed vegetable fritters served hot and crunchy', img:'https://picsum.photos/id/431/300/300' },
+          { id:25, category:'Starter', name:'Honey Chilli Potato', price:120, desc:'Crispy potato fingers glazed with honey and chilli sauce.', img:'https://picsum.photos/id/870/300/300' },
+          { id:26, category:'Starter', name:'Chilli Potato', price:120, desc:'Spicy fried potato tossed in tangy chilli sauce.', img:'https://picsum.photos/id/1060/300/300' },
+          { id:27, category:'Starter', name:'Gobi Manchurian Dry', price:100, desc:'Fried cauliflower florets coated in spicy dry sauce.', img:'https://picsum.photos/id/1080/300/300' },
+          { id:28, category:'Starter', name:'Gobi Manchurian Gravy', price:100, desc:'Cauliflower in flavorful Indo-Chinese gravy.', img:'https://picsum.photos/id/292/300/300' },
+          { id:29, category:'Starter', name:'Cheese Manchurian', price:200, desc:'Cheese balls cooked in zesty Manchurian sauce.', img:'https://picsum.photos/id/431/300/300' },
+          { id:30, category:'Fast Food', name:'Cheese Burger', price:80, desc:'Juicy burger topped with melted cheese and veggies.', img:'https://picsum.photos/id/870/300/300' },
+          { id:31, category:'Fast Food', name:'Veg. Chowmein', price:60, desc:'Stir-fried noodles with crunchy vegetables.', img:'https://picsum.photos/id/1060/300/300' },
+          { id:32, category:'Fast Food', name:'Veg. Sandwich', price:50, desc:'Fresh vegetable sandwich with butter and chutney.', img:'https://picsum.photos/id/1080/300/300' },
+          { id:33, category:'Fast Food', name:'Cheese Sandwich', price:80, desc:'Grilled sandwich stuffed with cheese and veggies.', img:'https://picsum.photos/id/292/300/300' },
+          { id:34, category:'Fast Food', name:'Paneer Sandwich', price:80, desc:'Paneer-filled sandwich grilled to perfection.', img:'https://picsum.photos/id/431/300/300' },
+          { id:35, category:'Pasta', name:'Red Sauce Pasta', price:100, desc:'Penne tossed in spicy tangy tomato sauce.', img:'https://picsum.photos/id/870/300/300' },
+          { id:36, category:'Pasta', name:'White Sauce Pasta', price:130, desc:'Creamy pasta cooked with cheese and herbs.', img:'https://picsum.photos/id/1060/300/300' },
+          { id:37, category:'Soup', name:'Veg Soup', price:60, desc:'Warm and healthy mixed vegetable soup.', img:'https://picsum.photos/id/1080/300/300' },
+          { id:38, category:'Soup', name:'Tomato Soup', price:60, desc:'Creamy and tangy tomato-based soup.', img:'https://picsum.photos/id/292/300/300' },
+          { id:39, category:'Soup', name:'Manchow Soup', price:70, desc:'Spicy Indo-Chinese soup with fried noodles topping.', img:'https://picsum.photos/id/431/300/300' },
+          { id:40, category:'Soup', name:'Cream of Tomato Soup', price:70, desc:'Smooth creamy tomato soup with buttery flavor.', img:'https://picsum.photos/id/870/300/300' },
+          { id:41, category:'Soup', name:'Hot & Sour  Soup', price:70, desc:'Spicy and tangy soup loaded with veggies.', img:'https://picsum.photos/id/1060/300/300' },
+          { id:42, category:'Soup', name:'Mushroom  Soup', price:100, desc:'Creamy soup made with fresh mushrooms and herbs.', img:'https://picsum.photos/id/1080/300/300' },
+          { id:43, category:'Pizza', name:'Capsicum Cheese Pizza', price:180, desc:'Fresh capsicum and cheese on a crispy crust.', img:'https://picsum.photos/id/292/300/300' },
+          { id:44, category:'Pizza', name:'Paneer Cheese Pizza', price:200, desc:'Soft paneer chunks with cheese and pizza sauce.', img:'https://picsum.photos/id/431/300/300' },
+          { id:45, category:'Pizza', name:'OTC Pizza', price:200, desc:'Onion, tomato & capsicum loaded pizza.', img:'https://picsum.photos/id/870/300/300' },
+          { id:46, category:'Raita', name:'Veg Raita', price:50, desc:'Curd mixed with chopped vegetables and spices.', img:'https://picsum.photos/id/1060/300/300' },
+          { id:47, category:'Raita', name:'Fruit Raita', price:80, desc:'Yogurt blended with fresh fruits and mild spices.', img:'https://picsum.photos/id/1080/300/300' },
+          { id:48, category:'Raita', name:'Bundi Raita', price:50, desc:'Spiced curd with soaked bundi pearls.', img:'https://picsum.photos/id/292/300/300' },
+          { id:49, category:'Raita', name:'Plain Dahi', price:30, desc:'Fresh homemade curd.', img:'https://picsum.photos/id/431/300/300' },
+          { id:50, category:'Raita', name:'Butter Milk', price:25, desc:'Light and refreshing salted chaas.', img:'https://picsum.photos/id/870/300/300' },
+          { id:51, category:'Raita', name:'Salt Lassi', price:40, desc:'Creamy yogurt drink with a salty twist.', img:'https://picsum.photos/id/1060/300/300' },
+          { id:52, category:'Raita', name:'Sweet Lassi', price:40, desc:'Thick and sweetened yogurt drink.', img:'https://picsum.photos/id/1080/300/300' },
+          { id:53, category:'Raita', name:'Masala Chach', price:30, desc:'Spiced buttermilk flavored with herbs.', img:'https://picsum.photos/id/292/300/300' },
+          { id:54, category:'Raita', name:'Dahi Fry', price:50, desc:'Seasoned curd tempered with ghee and spices.', img:'https://picsum.photos/id/431/300/300' },
+          { id:55, category:'Rice', name:'Steamed Rice', price:70, desc:'Plain fluffy steamed basmati rice.', img:'https://picsum.photos/id/870/300/300' },
+          { id:56, category:'Rice', name:'Veg Fried Rice', price:100, desc:'Stir-fried rice with mixed vegetables and soy flavor.', img:'https://picsum.photos/id/1060/300/300' },
+          { id:57, category:'Rice', name:'Green Peas Pulao', price:100, desc:'Fragrant rice cooked with green peas and spices.', img:'https://picsum.photos/id/1080/300/300' },
+          { id:58, category:'Rice', name:'Zeera Rice', price:100, desc:'Rice flavored with cumin seeds and ghee.', img:'https://picsum.photos/id/292/300/300' },
+          { id:59, category:'Rice', name:'Paneer Peas Pulao', price:150, desc:'Basmati rice with paneer cubes and green peas.', img:'https://picsum.photos/id/431/300/300' },
+          { id:60, category:'Papad', name:'Roasted Papad', price:20, desc:'Crunchy roasted lentil papad.', img:'https://picsum.photos/id/870/300/300' },
+          { id:61, category:'Papad', name:'Fry Papad', price:30, desc:'Deep-fried crispy papad.', img:'https://picsum.photos/id/1060/300/300' },
+          { id:62, category:'Papad', name:'Masala Papad', price:40, desc:'Papad topped with onion, tomato, and spices.', img:'https://picsum.photos/id/1080/300/300' },
+          { id:63, category:'Salad', name:'Green Salad', price:50, desc:'Fresh seasonal vegetables with salt & lemon.', img:'https://picsum.photos/id/292/300/300' },
+          { id:64, category:'Salad', name:'Onion Salad', price:30, desc:'Sliced onions served with lemon and salt.', img:'https://picsum.photos/id/431/300/300' },
+          { id:65, category:'Salad', name:'Kachumber Salad', price:60, desc:'Diced cucumber, tomato, onion mixed with spices.', img:'https://picsum.photos/id/870/300/300' },
+          { id:66, category:'Shake', name:'Cold Coffee with ice-cream', price:60, desc:'Iced coffee topped with a scoop of vanilla ice-cream.', img:'https://picsum.photos/id/1060/300/300' },
+          { id:67, category:'Shake', name:'Chocalate Shake', price:70, desc:'Thick chocolate milkshake topped with cream.', img:'https://picsum.photos/id/1080/300/300' },
+          { id:68, category:'Shake', name:'Vanilla Shake', price:90, desc:'Classic vanilla-flavored chilled milkshake.', img:'https://picsum.photos/id/292/300/300' },
+          { id:69, category:'Shake', name:'Strawberry Shake', price:80, desc:'Sweet pink shake made with strawberry flavor.', img:'https://picsum.photos/id/431/300/300' },
+          { id:70, category:'Bread', name:'Tawa Roti', price:10, desc:'Soft whole wheat roti cooked on tawa.', img:'https://picsum.photos/id/870/300/300' },
+          { id:71, category:'Bread', name:'Tawa Butter Roti', price:15, desc:'Roti brushed with butter for rich taste.', img:'https://picsum.photos/id/1060/300/300' },
+          { id:72, category:'Bread', name:'Tandoori Roti Plain', price:15, desc:'Clay oven-baked roti with smoky flavor.', img:'https://picsum.photos/id/1080/300/300' },
+          { id:73, category:'Bread', name:'Tandoori Roti Butter', price:20, desc:'Buttery version of tandoori roti.', img:'https://picsum.photos/id/292/300/300' },
+          { id:74, category:'Bread', name:'Butter Naan', price:30, desc:'Soft naan brushed with butter.', img:'https://picsum.photos/id/431/300/300' },
+          { id:75, category:'Bread', name:'Aloo Paratha', price:50, desc:'Paratha stuffed with spiced mashed potatoes.', img:'https://picsum.photos/id/870/300/300' },
+          { id:76, category:'Bread', name:'Garlic Naan', price:40, desc:'Naan topped with garlic and butter.', img:'https://picsum.photos/id/1060/300/300' },
+          { id:77, category:'Bread', name:'Stuff Paratha', price:60, desc:'Mixed vegetable stuffed paratha.', img:'https://picsum.photos/id/1080/300/300' },
+          { id:78, category:'Bread', name:'Plain Paratha', price:25, desc:'Classic layered plain paratha.', img:'https://picsum.photos/id/292/300/300' },
+          { id:79, category:'Bread', name:'Butter Paratha', price:40, desc:'Buttery and flaky layered paratha.', img:'https://picsum.photos/id/431/300/300' },
+          { id:80, category:'Bread', name:'Paneer Paratha', price:80, desc:'Paratha filled with spiced paneer stuffing.', img:'https://picsum.photos/id/870/300/300' },
+          { id:81, category:'Bread', name:'Stuff Naan', price:70, desc:'Naan filled with spicy stuffing.', img:'https://picsum.photos/id/1060/300/300' },
+          { id:82, category:'Bread', name:'Laccha Paratha', price:40, desc:'Multi-layered crispy paratha.', img:'https://picsum.photos/id/1080/300/300' },
+          { id:83, category:'Bread', name:'Balaji Paratha', price:80, desc:'Special house-style paratha with unique filling.', img:'https://picsum.photos/id/292/300/300' },
+          { id:84, category:'Bread', name:'Missi Roti', price:40, desc:'Gram flour-based spiced Indian bread.', img:'https://picsum.photos/id/431/300/300' },
+          { id:85, category:'Main Course', name:'Dal Fry', price:100, desc:'Yellow dal tempered with ghee and spices.', img:'https://picsum.photos/id/870/300/300' },
+          { id:86, category:'Main Course', name:'Garlic Dal', price:130, desc:'Dal flavored with roasted garlic tadka.', img:'https://picsum.photos/id/1060/300/300' },
+          { id:87, category:'Main Course', name:'Dal Makkhani', price:150, desc:'Slow-cooked creamy black lentils.', img:'https://picsum.photos/id/1080/300/300' },
+          { id:88, category:'Main Course', name:'Dal Tadka', price:130, desc:'Mixed dal topped with spiced ghee tadka.', img:'https://picsum.photos/id/292/300/300' },
+          { id:89, category:'Main Course', name:'Aloo Matar', price:100, desc:'Potatoes and peas cooked in tomato gravy.', img:'https://picsum.photos/id/431/300/300' },
+          { id:90, category:'Main Course', name:'Aloo Gobhi', price:100, desc:'Cauliflower and potato curry with Indian spices.', img:'https://picsum.photos/id/870/300/300' },
+          { id:91, category:'Main Course', name:'Aloo Palak', price:100, desc:'Spinach curry with tender potato cubes.', img:'https://picsum.photos/id/1060/300/300' },
+          { id:92, category:'Main Course', name:'Paneer Masala', price:170, desc:'Cottage cheese in spiced tomato gravy.', img:'https://picsum.photos/id/1080/300/300' },
+          { id:93, category:'Main Course', name:'Matar Paneer', price:170, desc:'Paneer and green peas in rich masala sauce.', img:'https://picsum.photos/id/292/300/300' },
+          { id:94, category:'Main Course', name:'Paneer Butter Masala', price:180, desc:'Creamy paneer curry with buttery tomato sauce.', img:'https://picsum.photos/id/431/300/300' },
+          { id:95, category:'Main Course', name:'Paneer Makkhawala', price:200, desc:'Paneer simmered in buttery makhani gravy.', img:'https://picsum.photos/id/870/300/300' },
+          { id:96, category:'Main Course', name:'Paneer Tikka Masala', price:200, desc:'Grilled paneer cooked in spicy tikka gravy.', img:'https://picsum.photos/id/1060/300/300' },
+          { id:97, category:'Main Course', name:'Paneer Burji', price:220, desc:'Scrambled paneer sautéed with onion and spices.', img:'https://picsum.photos/id/1080/300/300' },
+          { id:98, category:'Main Course', name:'Shahi Paneer Masala', price:200, desc:'Royal creamy curry made with paneer and cashew.', img:'https://picsum.photos/id/292/300/300' },
+          { id:99, category:'Main Course', name:'Kadai Paneer', price:200, desc:'Paneer cubes tossed with bell peppers in kadai masala.', img:'https://picsum.photos/id/431/300/300' },
+          { id:100, category:'Main Course', name:'Khoya Paneer', price:220, desc:'Paneer cooked in rich khoya-based gravy.', img:'https://picsum.photos/id/870/300/300' },
+          { id:101, category:'Main Course', name:'Paneer Manchurian', price:180, desc:'Indo-Chinese curry with paneer in spicy sauce.', img:'https://picsum.photos/id/1060/300/300' },
+          { id:102, category:'Main Course', name:'Mushroom Masala', price:170, desc:'Mushroom cooked in flavorful Indian spices.', img:'https://picsum.photos/id/1080/300/300' },
+          { id:103, category:'Main Course', name:'Palak Paneer', price:150, desc:'Paneer cubes in creamy spinach gravy.', img:'https://picsum.photos/id/292/300/300' },
+          { id:104, category:'Main Course', name:'Malai Kofta', price:220, desc:'Soft paneer dumplings in creamy gravy.', img:'https://picsum.photos/id/431/300/300' },
+          { id:105, category:'Main Course', name:'Veg Kofta', price:150, desc:'Vegetable balls in spiced tomato curry.', img:'https://picsum.photos/id/870/300/300' },
+          { id:106, category:'Main Course', name:'Veg Kofta Masala', price:150, desc:'Rich curry with stuffed veg kofta.', img:'https://picsum.photos/id/1060/300/300' },
+          { id:107, category:'Main Course', name:'Paneer Kofta', price:200, desc:'Paneer balls cooked in creamy cashew gravy.', img:'https://picsum.photos/id/1080/300/300' },
+          { id:108, category:'Main Course', name:'Kaju Curry', price:220, desc:'Cashew nuts cooked in aromatic masala.', img:'https://picsum.photos/id/292/300/300' },
+          { id:109, category:'Main Course', name:'Nargisi Kofta', price:180, desc:'Egg-shaped kofta filled with spiced paneer mix.', img:'https://picsum.photos/id/431/300/300' },
+          { id:110, category:'Main Course', name:'Gatta Masala', price:150, desc:'Rajasthani besan gatta in tangy curry.', img:'https://picsum.photos/id/870/300/300' },
+          { id:111, category:'Main Course', name:'Ker Sangri', price:250, desc:'Rajasthani dried berries and beans cooked with spices.', img:'https://picsum.photos/id/1060/300/300' },
+          { id:112, category:'Main Course', name:'Aloo Chola', price:100, desc:'Potato and chickpea curry with tangy flavor.', img:'https://picsum.photos/id/1080/300/300' },
+          { id:113, category:'Main Course', name:'Mix Veg', price:130, desc:'Seasonal vegetables cooked in spiced gravy.', img:'https://picsum.photos/id/292/300/300' },
+          { id:114, category:'Main Course', name:'Dum Aloo Kashmiri', price:180, desc:'Baby potatoes in creamy Kashmiri gravy.', img:'https://picsum.photos/id/431/300/300' },
+          { id:115, category:'Main Course', name:'Paneer Mushroom', price:180, desc:'Paneer and mushroom in thick masala gravy.', img:'https://picsum.photos/id/870/300/300' },
+          { id:116, category:'Main Course', name:'Paneer Pasanda', price:300, desc:'Rich stuffed paneer curry with royal touch.', img:'https://picsum.photos/id/1060/300/300' },
+          { id:117, category:'Main Course', name:'Sev Tomato', price:100, desc:'Tangy tomato curry topped with crispy sev.', img:'https://picsum.photos/id/1080/300/300' },
+          { id:118, category:'Main Course', name:'Veg Kolahpuri', price:120, desc:'Spicy mixed veg curry in Kolhapuri style.', img:'https://picsum.photos/id/292/300/300' },
+          { id:119, category:'Main Course', name:'Corn Palak', price:150, desc:'Corn and spinach cooked in mild creamy gravy.', img:'https://picsum.photos/id/431/300/300' },
+          { id:120, category:'Main Course', name:'Veg Hyderabadi', price:150, desc:'Spicy Hyderabadi-style vegetable curry.', img:'https://picsum.photos/id/870/300/300' },
+          { id:121, category:'Main Course', name:'Garlic Chutney', price:50, desc:'Fiery red chutney made with garlic and spices.', img:'https://picsum.photos/id/1060/300/300' },
+          { id:122, category:'Main Course', name:'Bhindi Masala', price:100, desc:'Stir-fried okra with onions and spices.', img:'https://picsum.photos/id/1080/300/300' },
+          { id:123, category:'Thali', name:'Dal, Mix Veg, Dahi,Salad,Five Roti', price:140, desc:'Balanced thali with dal, mix veg, curd & roti.', img:'https://picsum.photos/id/292/300/300' },
+          { id:124, category:'Thali', name:'Dal, 3 Type Sabji, Dahi,Salad,Papad,Two Type Bread,Pickle', price:250, desc:'Rich thali with variety of sabjis, roti & sides.', img:'https://picsum.photos/id/431/300/300' },
+        ];
+        let cart = [];
+
+        // Category & Menu Rendering (same as before)
+        const categories = ['All', ...new Set(MENU.map(i => i.category))];
+        const categoriesEl = document.getElementById('categories');
+        const menuGrid = document.getElementById('menu-grid');
+        const search = document.getElementById('search');
+
+        categories.forEach((cat, idx) => {
+            const btn = document.createElement('button');
+            btn.textContent = cat;
+            if (idx === 0) btn.classList.add('active');
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.categories button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                filterAndRender(cat === 'All' ? null : cat);
+            });
+            categoriesEl.appendChild(btn);
+        });
+
+        function render(items) {
+            menuGrid.innerHTML = '';
+            if (!items.length) {
+                menuGrid.innerHTML = '<div style="text-align:center; padding:40px; color:#666;">No matches found</div>';
+                return;
+            }
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="img-box"><img src="\( {item.img}" alt=" \){item.name}"></div>
+                    <div class="card-body">
+                        <div class="title">${item.name}</div>
+                        <div class="desc">${item.desc}</div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+                            <div class="price">₹${item.price}</div>
+                            <button class="add-btn" onclick="addToCart(${item.id})">ADD</button>
+                        </div>
+                    </div>
+                `;
+                menuGrid.appendChild(card);
+            });
+        }
+
+        function filterAndRender(cat = null) {
+            const q = search.value.toLowerCase();
+            let filtered = MENU.filter(item => {
+                const matchCat = !cat || item.category === cat;
+                const matchSearch = !q || (item.name + item.desc + item.category).toLowerCase().includes(q);
+                return matchCat && matchSearch;
+            });
+            render(filtered);
+        }
+
+        function addToCart(id) {
+            const item = MENU.find(i => i.id === id);
+            const existing = cart.find(i => i.id === id);
+            if (existing) existing.quantity = (existing.quantity || 1) + 1;
+            else cart.push({ ...item, quantity: 1 });
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const totalItems = cart.reduce((sum, i) => sum + (i.quantity || 1), 0);
+            const totalPrice = cart.reduce((sum, i) => sum + i.price * (i.quantity || 1), 0);
+            document.querySelector('.cart-items').textContent = `${totalItems} Items`;
+            document.querySelector('.cart-total').textContent = `₹${totalPrice}`;
+        }
+
+        function showCart() {
+            const container = document.getElementById('cartItems');
+            container.innerHTML = '';
+            let total = 0;
+
+            if (cart.length === 0) {
+                container.innerHTML = '<p style="text-align:center; padding:40px; color:#666;">Your cart is empty</p>';
+            } else {
+                cart.forEach((item, index) => {
+                    const qty = item.quantity || 1;
+                    total += item.price * qty;
+                    const div = document.createElement('div');
+                    div.className = 'cart-item';
+                    div.innerHTML = `
+                        <div style="flex:1;">
+                            <div style="font-weight:600;">${item.name}</div>
+                            <div style="color:#666; font-size:0.9rem;">₹${item.price} × ${qty}</div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <button class="quantity-btn" onclick="changeQty(${index}, -1)">–</button>
+                            <span style="font-weight:600; min-width:20px; text-align:center;">${qty}</span>
+                            <button class="quantity-btn" onclick="changeQty(${index}, 1)">+</button>
+                            <button onclick="removeFromCart(${index})" style="margin-left:15px; color:#e11d48; background:none; border:none; font-size:1.2rem;">🗑</button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+
+            document.getElementById('modalTotal').textContent = `₹${total}`;
+            document.getElementById('cartModal').style.display = 'flex';
+        }
+
+        function changeQty(index, change) {
+            cart[index].quantity = (cart[index].quantity || 1) + change;
+            if (cart[index].quantity < 1) cart.splice(index, 1);
+            showCart();
+            updateCartUI();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            showCart();
+            updateCartUI();
+        }
+
+        function closeCart() {
+            document.getElementById('cartModal').style.display = 'none';
+        }
+
+        function placeOrder() {
+            if (cart.length === 0) return;
+            alert(`🎉 Order Placed Successfully!\nTotal: ₹${cart.reduce((sum, i) => sum + i.price * (i.quantity||1), 0)}\nThank you for ordering at Shree Balaji Cafe!`);
+            cart = [];
+            updateCartUI();
+            closeCart();
+        }
+
+        // Search
+        let timer;
+        search.addEventListener('input', () => {
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                const active = document.querySelector('.categories button.active');
+                const cat = active && active.textContent !== 'All' ? active.textContent : null;
+                filterAndRender(cat);
+            }, 250);
+        });
+
+        // Load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+                document.getElementById('app').classList.remove('hidden');
+                filterAndRender();
+            }, 800);
+        });
+    
